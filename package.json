@@ -1,0 +1,18 @@
+{
+  "name": "toeic-system",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev:client": "yarn workspace client dev",
+    "dev:server": "yarn workspace server dev",
+    "build:client": "yarn workspace client build",
+    "build:server": "yarn workspace server build",
+    "dev": "concurrently \"yarn dev:server\" \"yarn dev:client\""
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.5"
+  }
+}

@@ -1,0 +1,9 @@
+/.yarn/**            linguist-vendored
+/.yarn/releases/*    binary
+/.yarn/plugins/**/*  binary
+/.pnp.*              binary linguist-generated
+node_modules/
+dist/
+.env
+.DS_Store
+yarn-error.log
