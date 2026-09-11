@@ -1,4 +1,9 @@
+import dns from "node:dns";
 import dotenv from "dotenv";
+
+// Fix lỗi querySrv ECONNREFUSED khi phân giải SRV record của MongoDB Atlas trên Windows / Node.js
+dns.setServers(["8.8.8.8", "1.1.1.1"]);
+
 dotenv.config();
 
 export const env = {

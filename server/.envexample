@@ -1,0 +1,23 @@
+# Cấu hình Server
+PORT=5000
+NODE_ENV=development
+
+# Kết nối MongoDB (Đổi sang link MongoDB Atlas nếu dùng cloud)
+MONGODB_URI=mongodb+srv://juniera:jjDR9rTuivH1Dgil@cluster0.pfnjzy9.mongodb.net/?appName=Cluster0
+DATABASE_NAME=toeic-system
+
+
+# Bảo mật JWT (Dùng để xác thực đăng nhập)
+JWT_SECRET=your_super_secret_jwt_key_toeic_2026
+JWT_EXPIRES_IN=7d
+
+# Lưu trữ file âm thanh Listening & ảnh bài Đọc (Cloudinary - tuỳ chọn)
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+
+# Cấu hình CORS (Đường dẫn frontend được phép gọi API)
+CLIENT_URL=http://localhost:5173
+
+#Author
+AUTHOR='Trung'
