@@ -8,14 +8,13 @@ export interface AuthRequest extends Request {
     role: string;
   };
 }
-// Bắt buộc phải đăng nhập
+//  Bắt buộc phải đăng nhập
 export const verifyToken = (
   req: AuthRequest,
   res: Response,
   next: NextFunction,
 ): void => {
   const authHeader = req.headers.authorization;
-  console.log(authHeader);
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     res

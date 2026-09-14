@@ -6,6 +6,10 @@ import { env } from "./config/enviroment.js";
 import { authRoute } from "./routes/authRoutes.js";
 import { vocabRoute } from "./routes/vocabRoute.js";
 import { questionRoutes } from "./routes/questionRoutes.js";
+import { examRoutes } from "./routes/examRoutes.js";
+
+import { writingRoute } from "./routes/writingRoutes copy.js";
+import { resultRoute } from "./routes/resultRoutes.js";
 const START_SERVER = () => {
   const app = express();
 
@@ -14,6 +18,9 @@ const START_SERVER = () => {
   app.use("/api/v1/auth", authRoute);
   app.use("/api/v1/vocabularies", vocabRoute);
   app.use("/api/v1/questions", questionRoutes);
+  app.use("/api/v1/exams", examRoutes);
+  app.use("/api/v1/results", resultRoute);
+  app.use("/api/v1/writings", writingRoute);
 
   // Route mặc định kiểm tra server
   app.get("/", async (req: Request, res: Response) => {
