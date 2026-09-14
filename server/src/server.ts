@@ -3,24 +3,16 @@ import cors from "cors";
 import exitHook from "async-exit-hook";
 import { CLOSE_DB, CONNECT_DB } from "./config/db.js";
 import { env } from "./config/enviroment.js";
-import { authRoute } from "./routes/authRoutes.js";
-import { vocabRoute } from "./routes/vocabRoute.js";
-import { questionRoutes } from "./routes/questionRoutes.js";
-import { examRoutes } from "./routes/examRoutes.js";
+import { apiV1 } from "./routes/v1/index.js";
 
-import { writingRoute } from "./routes/writingRoutes copy.js";
-import { resultRoute } from "./routes/resultRoutes.js";
 const START_SERVER = () => {
   const app = express();
 
   app.use(cors({ origin: env.CLIENT_URL }));
   app.use(express.json());
-  app.use("/api/v1/auth", authRoute);
-  app.use("/api/v1/vocabularies", vocabRoute);
-  app.use("/api/v1/questions", questionRoutes);
-  app.use("/api/v1/exams", examRoutes);
-  app.use("/api/v1/results", resultRoute);
-  app.use("/api/v1/writings", writingRoute);
+
+  // API Routes
+  app.use("/api/v1", apiV1);
 
   // Route mặc định kiểm tra server
   app.get("/", async (req: Request, res: Response) => {

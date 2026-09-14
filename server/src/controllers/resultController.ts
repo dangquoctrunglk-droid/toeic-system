@@ -1,4 +1,5 @@
 import type { Response } from "express";
+import { StatusCodes } from "http-status-codes";
 import type { AuthRequest } from "../middlewares/authMiddleware.js";
 import { Result } from "../models/Result.js";
 import { User } from "../models/User.js";
@@ -13,7 +14,7 @@ export const getUserHistory = async (
   try {
     const userId = req.user?.userId;
     if (!userId) {
-      res.status(401).json({
+      res.status(StatusCodes.UNAUTHORIZED).json({
         success: false,
         message:
           "Không tìm thấy thông tin người dùng hoặc phiên đăng nhập không hợp lệ",
@@ -24,9 +25,13 @@ export const getUserHistory = async (
     const history = await Result.find({ userId })
       .populate("examId", "title type duration")
       .sort({ createdAt: -1 });
-    res.status(200).json({ total: history.length, data: history });
+    res
+      .status(StatusCodes.OK)
+      .json({ total: history.length, data: history });
   } catch (error) {
-    res.status(500).json({ success: false, error: "Lỗi server" });
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ success: false, error: "Lỗi server" });
   }
 };
 // Thống kê tổng quan cho Admin Dashboard
@@ -42,7 +47,7 @@ export const getAdminDashBoardStats = async (
         Question.countDocuments(),
         Result.countDocuments(),
       ]);
-    res.status(200).json({
+    res.status(StatusCodes.OK).json({
       data: {
         totalUsers,
         totalExams,
@@ -51,6 +56,8 @@ export const getAdminDashBoardStats = async (
       },
     });
   } catch (error) {
-    res.status(500).json({ message: "Lỗi khi tải dữ liệu thống kê", error });
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "Lỗi khi tải dữ liệu thống kê", error });
   }
 };

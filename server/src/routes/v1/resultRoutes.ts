@@ -1,11 +1,12 @@
 import { Router } from "express";
-import { requireAdmin, verifyToken } from "../middlewares/authMiddleware.js";
+import { requireAdmin, verifyToken } from "../../middlewares/authMiddleware.js";
 import {
   getAdminDashBoardStats,
   getUserHistory,
-} from "../controllers/resultController.js";
+} from "../../controllers/resultController.js";
 
 export const resultRoute = Router();
+export const resultRoutes = resultRoute;
 
 resultRoute.get("/history", verifyToken, getUserHistory);
 resultRoute.get(

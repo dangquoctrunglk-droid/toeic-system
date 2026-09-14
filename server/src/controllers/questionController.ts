@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+import { StatusCodes } from "http-status-codes";
 import { Question } from "../models/Question.js";
 
 // Lấy danh sách câu hỏi kèm lọc theo Skill, Part và phân trang
@@ -22,14 +23,14 @@ export const getQuestions = async (
       Question.find(filter).sort({ createdAt: -1 }).skip(skip).limit(pageSize),
       Question.countDocuments(filter),
     ]);
-    res.status(200).json({
+    res.status(StatusCodes.OK).json({
       total,
       page: pageNumber,
       totalPages: Math.ceil(total / pageSize),
       data: questions,
     });
   } catch (error: any) {
-    res.status(500).json({
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       message: "Lỗi khi lấy danh sách câu hỏi",
       error: error?.message || error,
     });
@@ -45,12 +46,14 @@ export const getQuestionById = async (
     const { id } = req.params;
     const question = await Question.findById(id);
     if (!question) {
-      res.status(404).json({ message: "Không tìm thấy câu hỏi!" });
+      res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "Không tìm thấy câu hỏi!" });
       return;
     }
-    res.status(200).json({ data: question });
+    res.status(StatusCodes.OK).json({ data: question });
   } catch (error: any) {
-    res.status(500).json({
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       message: "Lỗi khi lấy câu hỏi",
       error: error?.message || error,
     });
@@ -73,7 +76,7 @@ export const createQuestion = async (
       explanation,
     } = req.body;
     if (!skill || !part || !questionText || !options || !correctAnswer) {
-      res.status(400).json({
+      res.status(StatusCodes.BAD_REQUEST).json({
         message: "Vui lòng cung cấp đầy đủ thông tin bắt buộc của câu hỏi!",
       });
       return;
@@ -87,12 +90,12 @@ export const createQuestion = async (
       correctAnswer,
       explanation,
     });
-    res.status(201).json({
+    res.status(StatusCodes.CREATED).json({
       message: "Thêm câu hỏi thành công!",
       data: newQuestion,
     });
   } catch (error: any) {
-    res.status(500).json({
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       message: "Lỗi khi thêm câu hỏi",
       error: error.message || error,
     });

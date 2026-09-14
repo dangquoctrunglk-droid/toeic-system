@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+import { StatusCodes } from "http-status-codes";
 import { Vocabulary } from "../models/Vocabulary.js";
 
 // Lấy danh sách từ vựng kèm tìm kiếm và lọc theo chủ đề
@@ -23,9 +24,11 @@ export const getVocabularies = async (
     }
 
     const vocabList = await Vocabulary.find(filter).sort({ createdAt: -1 });
-    res.status(200).json({ total: vocabList.length, data: vocabList });
+    res.status(StatusCodes.OK).json({ total: vocabList.length, data: vocabList });
   } catch (error) {
-    res.status(500).json({ message: "Lỗi khi lấy danh sách từ vựng", error });
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "Lỗi khi lấy danh sách từ vựng", error });
   }
 };
 // Thêm từ vựng mới (Chỉ dành cho Admin)
@@ -38,7 +41,7 @@ export const createVocabulary = async (
       req.body;
     if (!word || !meaning || !topic || !level || !phonetic) {
       res
-        .status(400)
+        .status(StatusCodes.BAD_REQUEST)
         .json({ message: "Vui lòng cung cấp đầy đủ thông tin từ vựng" });
       return;
     }
@@ -52,10 +55,12 @@ export const createVocabulary = async (
       audioUrl,
     });
     res
-      .status(201)
+      .status(StatusCodes.CREATED)
       .json({ message: "Thêm từ vựng thành công!", data: newVocab });
   } catch (error) {
     console.error("Lỗi khi tạo từ vựng:", error);
-    res.status(500).json({ message: "Lỗi khi tạo từ vựng" });
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "Lỗi khi tạo từ vựng" });
   }
 };

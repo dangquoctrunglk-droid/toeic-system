@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import type { NextFunction, Request, Response } from "express";
+import { StatusCodes } from "http-status-codes";
 import { env } from "../config/enviroment.js";
 
 export interface AuthRequest extends Request {
@@ -18,14 +19,14 @@ export const verifyToken = (
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     res
-      .status(401)
+      .status(StatusCodes.UNAUTHORIZED)
       .json({ message: "Bạn chưa đăng nhập hoặc token không hợp lệ!" });
     return;
   }
 
   const token = authHeader.split(" ")[1];
   if (!token) {
-    res.status(401).json({ message: "token không hợp lệ" });
+    res.status(StatusCodes.UNAUTHORIZED).json({ message: "token không hợp lệ" });
     return;
   }
   try {
@@ -36,7 +37,9 @@ export const verifyToken = (
     req.user = decoded;
     next();
   } catch (error) {
-    res.status(403).json({ message: "Token không hợp lệ hoặc đã hết hạn" });
+    res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ message: "Token không hợp lệ hoặc đã hết hạn" });
     return;
   }
 };
@@ -47,7 +50,7 @@ export const requireAdmin = (
   next: NextFunction,
 ): void => {
   if (!req.user || req.user.role !== "admin") {
-    res.status(403).json({
+    res.status(StatusCodes.FORBIDDEN).json({
       message: "Bạn không có quyền thực hiện hành động này (Yêu cầu Admin)!",
     });
     return;

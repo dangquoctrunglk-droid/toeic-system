@@ -4,10 +4,11 @@ import {
   getExamById,
   createExam,
   submitExam,
-} from "../controllers/examController.js";
-import { requireAdmin, verifyToken } from "../middlewares/authMiddleware.js";
+} from "../../controllers/examController.js";
+import { requireAdmin, verifyToken } from "../../middlewares/authMiddleware.js";
 
 export const examRoutes = Router();
+export const examRoute = examRoutes;
 // Xem danh sách đề và thông tin làm bài
 examRoutes.get("/", getExams);
 examRoutes.get("/:id", getExamById);
