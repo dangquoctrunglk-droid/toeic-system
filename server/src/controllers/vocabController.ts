@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { Vocabulary } from "../models/Vocabulary.js";
+import { addVocabulary, fetchVocavilaries } from "../service/vocabService.js";
 
 // Lấy danh sách từ vựng kèm tìm kiếm và lọc theo chủ đề
 export const getVocabularies = async (
@@ -8,23 +9,8 @@ export const getVocabularies = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const { search, topic, level } = req.query;
-    const filter: Record<string, any> = {};
-    if (search) {
-      filter.word = {
-        $regex: search,
-        $options: "i",
-      };
-    }
-    if (topic) {
-      filter.topic = topic;
-    }
-    if (level) {
-      filter.level = level;
-    }
-
-    const vocabList = await Vocabulary.find(filter).sort({ createdAt: -1 });
-    res.status(StatusCodes.OK).json({ total: vocabList.length, data: vocabList });
+    const vocabList = await fetchVocavilaries(req.query);
+    res.status(StatusCodes.OK).json(vocabList);
   } catch (error) {
     res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
@@ -45,15 +31,7 @@ export const createVocabulary = async (
         .json({ message: "Vui lòng cung cấp đầy đủ thông tin từ vựng" });
       return;
     }
-    const newVocab = await Vocabulary.create({
-      word,
-      phonetic,
-      meaning,
-      topic,
-      level: level || "Basic",
-      exampleSentence,
-      audioUrl,
-    });
+    const newVocab = await addVocabulary(req.body);
     res
       .status(StatusCodes.CREATED)
       .json({ message: "Thêm từ vựng thành công!", data: newVocab });

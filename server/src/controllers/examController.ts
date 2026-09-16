@@ -3,17 +3,11 @@ import { StatusCodes } from "http-status-codes";
 import type { AuthRequest } from "../middlewares/authMiddleware.js";
 import { Exam } from "../models/Exam.js";
 import { Result } from "../models/Result.js";
-
+import * as examService from "../service/examService.js";
 // Lấy danh sách tất cả các đề thi
 export const getExams = async (req: Request, res: Response): Promise<void> => {
   try {
-    const exams = await Exam.find()
-      .select("title type duration questions createdAt")
-      .lean();
-    const data = exams.map((exam) => ({
-      ...exam,
-      totalQuestions: exam.questions.length,
-    }));
+    const data = await examService.fetchAllExams();
     res.status(StatusCodes.OK).json({ data });
   } catch (error) {
     res
@@ -23,15 +17,11 @@ export const getExams = async (req: Request, res: Response): Promise<void> => {
 };
 // Lấy nội dung đề thi để làm bài (Ẩn đáp án đúng để chống gian lận)
 export const getExamById = async (
-  req: Request,
+  req: Request<{ id: string }>,
   res: Response,
 ): Promise<void> => {
   try {
-    const { id } = req.params;
-    const exam = await Exam.findById(id).populate({
-      path: "questions",
-      select: " -correctAnswer -explanation ",
-    }); // Ẩn đáp án và giải thích
+    const exam = await examService.fetchExamDetail(req.params.id);
     if (!exam) {
       res
         .status(StatusCodes.NOT_FOUND)
@@ -60,7 +50,7 @@ export const createExam = async (
       });
       return;
     }
-    const newExam = await Exam.create({
+    const newExam = await examService.createExam({
       title,
       type: type || "mini_test",
       duration,
@@ -81,8 +71,6 @@ export const submitExam = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const { id } = req.params;
-    const { answers } = req.body; // Mảng: [{ questionId: string, selectedOption: string }]
     const userId = req.user?.userId; // Từ authMiddleware
     if (!userId) {
       res
@@ -90,62 +78,15 @@ export const submitExam = async (
         .json({ message: "Không xác thực được người dùng!" });
       return;
     }
-    const exam = await Exam.findById(id).populate("questions");
-    if (!exam) {
-      res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ message: "Không tìm thấy đề thi!" });
-      return;
-    }
-    if (!answers || answers.length === 0) {
-      res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({ message: "Không có câu trả lời!" });
-      return;
-    }
-    const questionsList = exam.questions as any[];
-    let correctCount = 0;
-    const evaluatedAnswers: any[] = [];
-    // Chấm điểm từng câu dựa trên đáp án chuẩn trong DB
-    questionsList.forEach((q) => {
-      const userAnswerObj = answers?.find(
-        (a: any) => a.questionId === q._id.toString(),
-      );
-      const selected = userAnswerObj ? userAnswerObj.selectedOption : "";
-      const isCorrect =
-        selected.trim().toUpperCase() === q.correctAnswer.trim().toUpperCase();
-
-      if (isCorrect) {
-        correctCount += 1;
-      }
-      evaluatedAnswers.push({
-        questionId: q._id,
-        selectedOption: selected,
-        isCorrect,
-      });
-    });
-    // Tính điểm theo thang mẫu (tỉ lệ phần trăm hoặc quy đổi)
-    const totalQuestions = questionsList.length;
-    const totalScore = Math.round((correctCount / totalQuestions) * 990);
-    // Lưu kết quả vào DB
-    const saveResult = await Result.create({
+    const evaluation = await examService.gradeExamSubmission(
       userId,
-      examId: exam._id,
-      totalScore,
-      correctAnswersCount: correctCount,
-      totalQuestions,
-      userAnswers: evaluatedAnswers,
-    });
+      req.params.id as string,
+      req.body.answers,
+    );
 
     res.status(StatusCodes.OK).json({
       message: "Nộp bài thành công!",
-      data: {
-        resultId: saveResult._id,
-        totalScore,
-        correctAnswersCount: correctCount,
-        totalQuestions,
-        evaluatedAnswers,
-      },
+      data: evaluation,
     });
   } catch (error) {
     res
