@@ -4,7 +4,7 @@ import { User } from "../models/User.js";
 import bcrypt from "bcryptjs";
 import { env } from "../config/enviroment.js";
 import jwt from "jsonwebtoken";
-import { loginUser, registerUser } from "../service/authService.js";
+import { loginUser, registerUser } from "../services/authService.js";
 
 //
 export const register = async (req: Request, res: Response): Promise<void> => {

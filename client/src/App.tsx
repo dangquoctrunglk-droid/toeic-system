@@ -1,5 +1,13 @@
+import HomePage from "./pages/home/HomePage";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 function App() {
-  return <h1>TOEIC System</h1>;
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 export default App;

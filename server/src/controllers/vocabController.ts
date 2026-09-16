@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { Vocabulary } from "../models/Vocabulary.js";
-import { addVocabulary, fetchVocavilaries } from "../service/vocabService.js";
+import { addVocabulary, fetchVocavilaries } from "../services/vocabService.js";
 
 // Lấy danh sách từ vựng kèm tìm kiếm và lọc theo chủ đề
 export const getVocabularies = async (

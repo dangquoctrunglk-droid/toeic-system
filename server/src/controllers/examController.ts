@@ -3,7 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import type { AuthRequest } from "../middlewares/authMiddleware.js";
 import { Exam } from "../models/Exam.js";
 import { Result } from "../models/Result.js";
-import * as examService from "../service/examService.js";
+import * as examService from "../services/examService.js";
 // Lấy danh sách tất cả các đề thi
 export const getExams = async (req: Request, res: Response): Promise<void> => {
   try {
