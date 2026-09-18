@@ -8,7 +8,7 @@ export function FeaturesSection() {
   return (
     <section className="py-24 sm:py-32 relative" id="courses" ref={ref}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
+        {/* Tiêu đề mục */}
         <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
           <span className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-bold tracking-[1.5px] uppercase px-4 py-2 rounded-full mb-4">
             <Zap size={14} className="text-indigo-400" />
@@ -25,7 +25,7 @@ export function FeaturesSection() {
           </p>
         </div>
 
-        {/* Feature Grid */}
+        {/* Lưới danh sách tính năng */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {featuresData.map((feature, i) => (
             <a

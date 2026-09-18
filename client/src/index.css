@@ -123,6 +123,24 @@
   animation: slide-in-right 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+@keyframes modal-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modal-zoom-in {
+  from { opacity: 0; transform: scale(0.95) translateY(12px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.animate-modal-backdrop {
+  animation: modal-fade-in 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-modal-card {
+  animation: modal-zoom-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 .gradient-text {
   background: linear-gradient(135deg, #818cf8 0%, #c084fc 50%, #22d3ee 100%);
   -webkit-background-clip: text;

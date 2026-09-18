@@ -1,12 +1,14 @@
 export interface User {
-  id: string;
-  fullname: string;
+  id?: string;
+  _id?: string;
+  fullName?: string;
+  fullname?: string;
   email: string;
   role: "student" | "admin";
 }
 export interface AuthResponse {
   token?: string;
-  user: User;
+  user?: User;
   message: string;
 }
 

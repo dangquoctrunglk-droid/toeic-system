@@ -8,7 +8,7 @@ export function TestimonialsSection() {
   return (
     <section className="py-24 sm:py-32 relative" id="testimonials" ref={ref}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
+        {/* Tiêu đề mục */}
         <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
           <span className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-bold tracking-[1.5px] uppercase px-4 py-2 rounded-full mb-4">
             <Star size={14} className="text-amber-400 fill-amber-400" />
@@ -24,7 +24,7 @@ export function TestimonialsSection() {
           </p>
         </div>
 
-        {/* Testimonial Cards */}
+        {/* Thẻ đánh giá của học viên */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {testimonialsData.map((item, i) => (
             <div
@@ -35,7 +35,7 @@ export function TestimonialsSection() {
               style={{ animationDelay: `${i * 0.12}s` }}
             >
               <div>
-                {/* User info */}
+                {/* Thông tin học viên */}
                 <div className="flex items-center gap-3.5 mb-5">
                   <div
                     className="w-12 h-12 rounded-xl flex items-center justify-center text-sm font-bold text-white shadow-md"
@@ -51,19 +51,19 @@ export function TestimonialsSection() {
                   </div>
                 </div>
 
-                {/* Score badge */}
+                {/* Huy hiệu điểm số đạt được */}
                 <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold px-3 py-1.5 rounded-lg mb-5">
                   <TrendingUp size={14} />
                   <span>Bứt phá: {item.score} TOEIC</span>
                 </div>
 
-                {/* Quote */}
+                {/* Lời nhận xét */}
                 <p className="text-sm text-slate-300 leading-relaxed mb-6 italic">
                   &quot;{item.content}&quot;
                 </p>
               </div>
 
-              {/* Stars */}
+              {/* Đánh giá số sao */}
               <div className="flex text-amber-400 gap-1 pt-2 border-t border-slate-800/80">
                 {[...Array(5)].map((_, idx) => (
                   <Star key={idx} size={15} className="fill-amber-400" />

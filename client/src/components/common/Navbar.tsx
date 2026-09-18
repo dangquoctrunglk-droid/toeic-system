@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { GraduationCap, Star, ArrowRight, Menu, X } from 'lucide-react';
 
 export function Navbar() {
@@ -28,8 +29,8 @@ export function Navbar() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-        {/* Brand */}
-        <a href="/" className="flex items-center gap-3 no-underline group">
+        {/* Logo & Tên thương hiệu */}
+        <Link to="/" className="flex items-center gap-3 no-underline group">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-cyan-400 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30 group-hover:scale-105 transition-transform">
             <GraduationCap size={22} className="text-white" />
           </div>
@@ -46,9 +47,9 @@ export function Navbar() {
               ETS Prep Platform
             </span>
           </div>
-        </a>
+        </Link>
 
-        {/* Desktop links */}
+        {/* Các liên kết menu trên máy tính */}
         <div className="hidden md:flex items-center gap-1 bg-slate-900/60 border border-slate-800/80 rounded-full px-4 py-1.5 backdrop-blur-md">
           {links.map((link) => (
             <a
@@ -61,28 +62,28 @@ export function Navbar() {
           ))}
         </div>
 
-        {/* Desktop actions */}
+        {/* Các nút hành động trên máy tính (Đăng nhập, Đăng ký) */}
         <div className="hidden md:flex items-center gap-3">
           <div className="hidden lg:flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs font-semibold px-3 py-1.5 rounded-full">
             <Star size={13} className="fill-amber-400 text-amber-400" />
             <span>4.9 · 10K+ học viên</span>
           </div>
-          <a
-            href="/auth/login"
+          <Link
+            to="/auth/login"
             className="text-slate-300 text-sm font-medium px-4 py-2 hover:text-white transition-colors"
           >
             Đăng nhập
-          </a>
-          <a
-            href="/auth/register"
+          </Link>
+          <Link
+            to="/auth/register"
             className="inline-flex items-center gap-1.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-600 text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:-translate-y-0.5 transition-all"
           >
             Bắt đầu miễn phí
             <ArrowRight size={15} />
-          </a>
+          </Link>
         </div>
 
-        {/* Mobile menu toggle */}
+        {/* Nút bật/tắt menu trên điện thoại */}
         <button
           className="md:hidden p-2 text-slate-300 hover:text-white focus:outline-none"
           onClick={() => setMobileOpen(!mobileOpen)}
@@ -92,7 +93,7 @@ export function Navbar() {
         </button>
       </div>
 
-      {/* Mobile menu drawer */}
+      {/* Ngăn kéo menu trên điện thoại */}
       {mobileOpen && (
         <div className="md:hidden bg-[#0a1024]/95 border-b border-indigo-500/20 backdrop-blur-2xl px-6 py-5 flex flex-col gap-3 animate-slide-up">
           {links.map((link) => (
@@ -106,18 +107,20 @@ export function Navbar() {
             </a>
           ))}
           <div className="flex flex-col gap-2.5 pt-3">
-            <a
-              href="/auth/login"
+            <Link
+              to="/auth/login"
               className="text-slate-300 text-center py-2.5 text-base font-medium hover:text-white"
+              onClick={() => setMobileOpen(false)}
             >
               Đăng nhập
-            </a>
-            <a
-              href="/auth/register"
+            </Link>
+            <Link
+              to="/auth/register"
               className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-center py-3 rounded-xl font-semibold shadow-lg shadow-indigo-500/30"
+              onClick={() => setMobileOpen(false)}
             >
               Bắt đầu miễn phí
-            </a>
+            </Link>
           </div>
         </div>
       )}

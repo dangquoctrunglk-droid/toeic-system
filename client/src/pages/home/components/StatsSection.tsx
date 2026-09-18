@@ -42,8 +42,10 @@ function SingleStatCard({ target, label, prefix = '', suffix, icon: Icon, color 
 export function StatsSection() {
   return (
     <section className="py-20 relative overflow-hidden">
+      {/* Nền hiệu ứng ánh sáng tím mờ */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-indigo-950/20 to-transparent pointer-events-none" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        {/* Lưới 4 thẻ thống kê ấn tượng */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {statsConfig.map((stat, i) => (
             <SingleStatCard
