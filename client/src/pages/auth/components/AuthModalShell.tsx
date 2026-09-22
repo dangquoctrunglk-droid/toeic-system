@@ -82,7 +82,7 @@ export function AuthModalShell({
 
       {/* Khung Card Modal 2 cột chính - Dark Theme đồng bộ ứng dụng */}
       <div
-        className={`relative z-10 w-full max-w-5xl rounded-[28px] sm:rounded-[36px] overflow-hidden shadow-2xl shadow-black/90 border border-indigo-500/20 bg-[#0a1124] grid grid-cols-1 lg:grid-cols-12 min-h-[580px] lg:min-h-[640px] transform transition-all duration-200 ease-out ${
+        className={`relative z-10 w-full max-w-5xl max-h-[92vh] rounded-[28px] sm:rounded-[36px] overflow-hidden shadow-2xl shadow-black/90 border border-indigo-500/20 bg-[#0a1124] grid grid-cols-1 lg:grid-cols-12 transform transition-all duration-200 ease-out ${
           isClosing
             ? "opacity-0 scale-95 translate-y-3"
             : "opacity-100 scale-100 translate-y-0 animate-modal-card"

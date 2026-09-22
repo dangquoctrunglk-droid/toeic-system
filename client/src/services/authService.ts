@@ -1,8 +1,9 @@
 import api from "./api";
 import type {
   AuthResponse,
-  LoginInputs,
-  RegisterInputs,
+  GoogleAuthInputs,
+  SigninInputs,
+  SignupInputs,
   User,
 } from "../types/authTypes";
 
@@ -11,13 +12,13 @@ const USER_KEY = "user";
 
 export const authService = {
   /**
-   * Đăng nhập tài khoản
+   * Đăng nhập tài khoản (Sign In)
    */
-  async login(
-    credentials: LoginInputs,
+  async signin(
+    credentials: SigninInputs,
     rememberMe: boolean = true,
   ): Promise<AuthResponse> {
-    const response = await api.post<AuthResponse>("/auth/login", {
+    const response = await api.post<AuthResponse>("/auth/signin", {
       email: credentials.email,
       password: credentials.password,
     });
@@ -38,16 +39,61 @@ export const authService = {
   },
 
   /**
-   * Đăng ký tài khoản học viên mới
+   * Đăng ký tài khoản học viên mới (Sign Up)
    */
-  async register(
-    data: Omit<RegisterInputs, "confirmPassword"> | RegisterInputs,
+  async signup(
+    data: Omit<SignupInputs, "confirmPassword"> | SignupInputs,
   ): Promise<AuthResponse> {
-    const response = await api.post<AuthResponse>("/auth/register", {
+    const response = await api.post<AuthResponse>("/auth/signup", {
       fullName: data.fullName,
       email: data.email,
       password: data.password,
     });
+
+    return response.data;
+  },
+
+  /**
+   * Yêu cầu mã OTP Quên mật khẩu
+   */
+  async forgotPassword(email: string): Promise<AuthResponse> {
+    const response = await api.post<AuthResponse>("/auth/forgot-password", {
+      email,
+    });
+    return response.data;
+  },
+
+  /**
+   * Đặt lại mật khẩu mới với mã OTP
+   */
+  async resetPassword(data: {
+    email: string;
+    otp: string;
+    newPassword: string;
+  }): Promise<AuthResponse> {
+    const response = await api.post<AuthResponse>("/auth/reset-password", data);
+    return response.data;
+  },
+
+  /**
+   * Đăng nhập bằng Google
+   */
+  async loginWithGoogle(
+    data: GoogleAuthInputs,
+    rememberMe: boolean = true,
+  ): Promise<AuthResponse> {
+    const response = await api.post<AuthResponse>("/auth/google", data);
+    const { token, user } = response.data;
+
+    if (token) {
+      if (rememberMe) {
+        localStorage.setItem(TOKEN_KEY, token);
+        if (user) localStorage.setItem(USER_KEY, JSON.stringify(user));
+      } else {
+        sessionStorage.setItem(TOKEN_KEY, token);
+        if (user) sessionStorage.setItem(USER_KEY, JSON.stringify(user));
+      }
+    }
 
     return response.data;
   },
@@ -93,8 +139,11 @@ export const authService = {
 
 // Xuất các hàm riêng lẻ để thuận tiện import
 export const {
-  login,
-  register,
+  signin,
+  signup,
+  forgotPassword,
+  resetPassword,
+  loginWithGoogle,
   logout,
   getToken,
   getCurrentUser,

@@ -152,7 +152,7 @@ export const pricingPlans: PricingPlan[] = [
       'Theo dõi tiến độ học tập cơ bản',
     ],
     cta: 'Bắt đầu miễn phí',
-    ctaLink: '/auth/register',
+    ctaLink: '/auth/signup',
   },
   {
     name: 'TOEIC Master Pro',
@@ -171,7 +171,7 @@ export const pricingPlans: PricingPlan[] = [
       'Hỗ trợ giải đáp thắc mắc 24/7 với AI Chatbot',
     ],
     cta: 'Nâng cấp gói Pro',
-    ctaLink: '/auth/register',
+    ctaLink: '/auth/signup',
   },
   {
     name: 'Trường học & Doanh nghiệp',
@@ -189,6 +189,6 @@ export const pricingPlans: PricingPlan[] = [
       'Dedicated Account Manager hỗ trợ triển khai',
     ],
     cta: 'Liên hệ tư vấn',
-    ctaLink: '/auth/register',
+    ctaLink: '/auth/signup',
   },
 ];

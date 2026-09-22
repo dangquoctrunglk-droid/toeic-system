@@ -29,7 +29,7 @@ export function CTASection() {
 
             <div className="flex flex-wrap items-center justify-center gap-4">
               <Link
-                to="/auth/register"
+                to="/auth/signup"
                 className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-600 text-white text-base font-semibold px-8 py-4 rounded-xl shadow-xl shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:-translate-y-0.5 transition-all"
               >
                 <Zap size={18} className="text-cyan-300" />

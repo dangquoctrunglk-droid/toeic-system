@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { useGoogleLogin } from "@react-oauth/google";
+import axios from "axios";
 import {
   GraduationCap,
   Eye,
@@ -12,7 +14,8 @@ import {
 } from "lucide-react";
 import { AuthModalShell } from "./components/AuthModalShell";
 import { AuthMarketingBanner } from "./components/AuthMarketingBanner";
-import { authService } from "../../services/authService";
+import { useAuth } from "../../context";
+import { getErrorMessage } from "../../utils/errorHandler";
 
 export interface SigninFormData {
   email: string;
@@ -24,16 +27,20 @@ export interface SigninModalProps {
   isOpen?: boolean;
   onClose?: () => void;
   onSwitchToSignup?: () => void;
+  onSwitchToForgotPassword?: () => void;
 }
 
 export function SigninModal({
   isOpen = true,
   onClose,
   onSwitchToSignup,
+  onSwitchToForgotPassword,
 }: SigninModalProps) {
   const navigate = useNavigate();
+  const { signin, loginWithGoogle } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const {
     register,
@@ -51,7 +58,7 @@ export function SigninModal({
   const onSubmit = async (data: SigninFormData) => {
     try {
       setServerError(null);
-      await authService.login(
+      await signin(
         {
           email: data.email,
           password: data.password,
@@ -61,12 +68,12 @@ export function SigninModal({
       alert("Đăng nhập thành công!");
       if (onClose) onClose();
     } catch (err: unknown) {
-      const errorResponse = err as { response?: { data?: { message?: string } }; message?: string };
-      const message =
-        errorResponse.response?.data?.message ||
-        errorResponse.message ||
-        "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin!";
-      setServerError(message);
+      setServerError(
+        getErrorMessage(
+          err,
+          "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin!",
+        ),
+      );
     }
   };
 
@@ -74,14 +81,64 @@ export function SigninModal({
     if (onSwitchToSignup) {
       onSwitchToSignup();
     } else {
-      navigate("/auth/register");
+      navigate("/auth/signup");
     }
   };
+
+  const handleGoToForgotPassword = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (onSwitchToForgotPassword) {
+      onSwitchToForgotPassword();
+    } else {
+      navigate("/auth/forgot-password");
+    }
+  };
+
+  // Đăng nhập Google với @react-oauth/google
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        setIsGoogleLoading(true);
+        setServerError(null);
+
+        // Lấy thông tin tài khoản người dùng từ Google API với access_token
+        const userInfo = await axios.get(
+          "https://www.googleapis.com/oauth2/v3/userinfo",
+          {
+            headers: {
+              Authorization: `Bearer ${tokenResponse.access_token}`,
+            },
+          },
+        );
+
+        const { email, name, picture, sub } = userInfo.data;
+
+        await loginWithGoogle({
+          email,
+          name,
+          picture,
+          googleId: sub,
+        });
+
+        alert("Đăng nhập bằng Google thành công!");
+        if (onClose) onClose();
+      } catch (err: unknown) {
+        setServerError(getErrorMessage(err, "Đăng nhập bằng Google thất bại!"));
+      } finally {
+        setIsGoogleLoading(false);
+      }
+    },
+    onError: (error) => {
+      console.error("Lỗi xác thực Google OAuth:", error);
+      setServerError("Đăng nhập Google thất bại hoặc bạn đã đóng cửa sổ.");
+      setIsGoogleLoading(false);
+    },
+  });
 
   return (
     <AuthModalShell isOpen={isOpen} onClose={onClose}>
       {/* CỘT TRÁI: FORM ĐĂNG NHẬP */}
-      <div className="lg:col-span-6 xl:col-span-5 bg-[#0a1124] border-b lg:border-b-0 lg:border-r border-indigo-500/15 p-7 sm:p-10 lg:p-12 flex flex-col justify-between text-slate-200">
+      <div className="lg:col-span-6 xl:col-span-5 bg-[#0a1124] border-b lg:border-b-0 lg:border-r border-indigo-500/15 p-6 sm:p-8 lg:p-10 flex flex-col justify-between text-slate-200 overflow-y-auto max-h-[92vh]">
         <div>
           {/* Logo & Tên thương hiệu TOEICMaster AI */}
           <div className="flex items-center gap-2.5 mb-7">
@@ -122,7 +179,12 @@ export function SigninModal({
           )}
 
           {/* Biểu mẫu đăng nhập (React Hook Form) */}
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="space-y-4"
+            noValidate
+            autoComplete="off"
+          >
             {/* Ô nhập địa chỉ Email */}
             <div className="space-y-1.5">
               <label className="block text-xs font-semibold text-slate-300">
@@ -131,6 +193,7 @@ export function SigninModal({
               <div className="relative">
                 <input
                   type="email"
+                  autoComplete="off"
                   placeholder="you@example.com"
                   {...register("email", {
                     required: "Vui lòng nhập địa chỉ email",
@@ -166,11 +229,8 @@ export function SigninModal({
                 </label>
                 <a
                   href="#forgot-password"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    alert("Chức năng khôi phục mật khẩu đang được xử lý.");
-                  }}
-                  className="text-xs font-medium text-indigo-400 hover:text-indigo-300 hover:underline transition-colors"
+                  onClick={handleGoToForgotPassword}
+                  className="text-xs font-medium text-indigo-400 hover:text-indigo-300 hover:underline transition-colors cursor-pointer"
                 >
                   Quên mật khẩu?
                 </a>
@@ -178,6 +238,7 @@ export function SigninModal({
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
                   placeholder="Nhập mật khẩu của bạn"
                   {...register("password", {
                     required: "Vui lòng nhập mật khẩu",
@@ -246,28 +307,35 @@ export function SigninModal({
           <div className="mt-5 pt-4 border-t border-slate-800/80 flex flex-col gap-2">
             <button
               type="button"
-              onClick={() => alert("Đăng nhập với Google")}
-              className="w-full py-2.5 px-4 rounded-xl border border-slate-700/80 hover:border-slate-600 bg-slate-900/60 hover:bg-slate-900 text-slate-200 text-xs font-semibold flex items-center justify-center gap-2.5 transition-all shadow-sm cursor-pointer hover:shadow-indigo-500/10"
+              disabled={isGoogleLoading}
+              onClick={() => handleGoogleLogin()}
+              className="w-full py-2.5 px-4 rounded-xl border border-slate-700/80 hover:border-slate-600 bg-slate-900/60 hover:bg-slate-900 text-slate-200 text-xs font-semibold flex items-center justify-center gap-2.5 transition-all shadow-sm cursor-pointer hover:shadow-indigo-500/10 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              <svg className="w-4 h-4" viewBox="0 0 24 24">
-                <path
-                  fill="#4285F4"
-                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                />
-                <path
-                  fill="#34A853"
-                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                />
-                <path
-                  fill="#FBBC05"
-                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
-                />
-                <path
-                  fill="#EA4335"
-                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
-                />
-              </svg>
-              <span>Tiếp tục với Google</span>
+              {isGoogleLoading ? (
+                <span>Đang kết nối Google...</span>
+              ) : (
+                <>
+                  <svg className="w-4 h-4" viewBox="0 0 24 24">
+                    <path
+                      fill="#4285F4"
+                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                    />
+                    <path
+                      fill="#34A853"
+                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                    />
+                    <path
+                      fill="#FBBC05"
+                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                    />
+                    <path
+                      fill="#EA4335"
+                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                    />
+                  </svg>
+                  <span>Tiếp tục với Google</span>
+                </>
+              )}
             </button>
           </div>
         </div>

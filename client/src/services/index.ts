@@ -1,2 +1,12 @@
 export { default as api } from "./api";
-export { authService, login, register, logout, getToken, getCurrentUser, isAuthenticated } from "./authService";
+export {
+  authService,
+  signin,
+  signup,
+  logout,
+  getToken,
+  getCurrentUser,
+  isAuthenticated,
+} from "./authService";
+
+

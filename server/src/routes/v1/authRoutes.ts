@@ -1,6 +1,15 @@
 import { Router } from "express";
-import { login, register } from "../../controllers/authController.js";
+import {
+  forgotPassword,
+  googleLogin,
+  resetPasswordController,
+  signin,
+  signup,
+} from "../../controllers/authController.js";
 
 export const authRoute = Router();
-authRoute.post("/register", register);
-authRoute.post("/login", login);
+authRoute.post("/signup", signup);
+authRoute.post("/signin", signin);
+authRoute.post("/forgot-password", forgotPassword);
+authRoute.post("/reset-password", resetPasswordController);
+authRoute.post("/google", googleLogin);

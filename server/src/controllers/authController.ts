@@ -1,13 +1,15 @@
 import type { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { User } from "../models/User.js";
-import bcrypt from "bcryptjs";
-import { env } from "../config/enviroment.js";
-import jwt from "jsonwebtoken";
-import { loginUser, registerUser } from "../services/authService.js";
+import {
+  googleLoginUser,
+  requestForgotPassword,
+  resetPassword,
+  signinUser,
+  signupUser,
+} from "../services/authService.js";
 
-//
-export const register = async (req: Request, res: Response): Promise<void> => {
+// Đăng ký tài khoản
+export const signup = async (req: Request, res: Response): Promise<void> => {
   try {
     const { fullName, email, password } = req.body;
     if (!fullName || !email || !password) {
@@ -16,22 +18,21 @@ export const register = async (req: Request, res: Response): Promise<void> => {
         .json({ message: "Vui lòng nhập đầy đủ thông tin" });
       return;
     }
-    const user = await registerUser(fullName, email, password);
+    const user = await signupUser(fullName, email, password);
     res.status(StatusCodes.CREATED).json({
       message: "Đăng ký thành công",
       user,
     });
   } catch (error: any) {
-    console.error("Lỗi đăng ký:", error);
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: "Lỗi server khi đăng ký",
-      error: error?.message || error,
+    const isConflict = error?.message?.includes("đã được sử dụng");
+    res.status(isConflict ? StatusCodes.CONFLICT : StatusCodes.BAD_REQUEST).json({
+      message: error?.message || "Lỗi khi đăng ký tài khoản",
     });
   }
 };
 
-//
-export const login = async (req: Request, res: Response): Promise<void> => {
+// Đăng nhập tài khoản
+export const signin = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -40,17 +41,72 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         .json({ message: "Vui lòng nhập đầy đủ thông tin" });
       return;
     }
-    const data = await loginUser(email, password);
+    const data = await signinUser(email, password);
 
     res.status(StatusCodes.OK).json({
       message: "Đăng nhập thành công",
       ...data,
     });
   } catch (error: any) {
-    console.error("Lỗi đăng nhập:", error);
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: "Lỗi server khi đăng nhập",
-      error: error?.message || error,
+    res.status(StatusCodes.UNAUTHORIZED).json({
+      message: error?.message || "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin!",
+    });
+  }
+};
+
+// Quên mật khẩu - Gửi mã OTP
+export const forgotPassword = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ message: "Vui lòng cung cấp địa chỉ email" });
+      return;
+    }
+    const result = await requestForgotPassword(email);
+    res.status(StatusCodes.OK).json(result);
+  } catch (error: any) {
+    res.status(StatusCodes.BAD_REQUEST).json({
+      message: error?.message || "Không thể xử lý yêu cầu quên mật khẩu",
+    });
+  }
+};
+
+// Đặt lại mật khẩu mới với mã OTP
+export const resetPasswordController = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const { email, otp, newPassword } = req.body;
+    if (!email || !otp || !newPassword) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        message: "Vui lòng nhập đầy đủ Email, mã OTP và mật khẩu mới",
+      });
+      return;
+    }
+    const result = await resetPassword(email, otp, newPassword);
+    res.status(StatusCodes.OK).json(result);
+  } catch (error: any) {
+    res.status(StatusCodes.BAD_REQUEST).json({
+      message: error?.message || "Đặt lại mật khẩu thất bại",
+    });
+  }
+};
+
+// Đăng nhập / Đăng ký qua Google
+export const googleLogin = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const data = await googleLoginUser(req.body);
+    res.status(StatusCodes.OK).json({
+      message: "Đăng nhập Google thành công",
+      ...data,
+    });
+  } catch (error: any) {
+    console.error("Lỗi đăng nhập Google:", error);
+    res.status(StatusCodes.BAD_REQUEST).json({
+      message: error?.message || "Đăng nhập Google thất bại",
     });
   }
 };
