@@ -1,11 +1,18 @@
 import type React from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { Footer, Navbar } from "../components/common";
+import { Navbar } from "./Navbar";
+import { Footer } from "./Footer";
 import { ForgotPasswordModal, SigninModal, SignupModal } from "../pages/auth";
+import { useAuth, useTheme } from "../context";
 
 export const MainLayout: React.FC = () => {
+  const { isDarkMode } = useTheme();
+  const { isAuthenticated, user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Kiểm tra người dùng đã đăng nhập chưa
+  const isUserLoggedIn = Boolean(isAuthenticated || user);
 
   const isSigninRoute = location.pathname === "/auth/signin";
   const isSignupRoute = location.pathname === "/auth/signup";
@@ -16,7 +23,11 @@ export const MainLayout: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#080d1c] text-slate-100 selection:bg-indigo-500 selection:text-white">
+    <div
+      className={`min-h-screen flex flex-col transition-colors duration-200 selection:bg-indigo-500 selection:text-white ${
+        isDarkMode ? "bg-[#080d1c] text-slate-100" : "bg-[#f8fafc] text-slate-900"
+      }`}
+    >
       {/* Navbar cố định ở đầu trang */}
       <Navbar />
 
@@ -25,8 +36,8 @@ export const MainLayout: React.FC = () => {
         <Outlet />
       </main>
 
-      {/* Footer ở cuối trang */}
-      <Footer />
+      {/* Footer ở cuối trang: chỉ hiển thị cho khách vãng lai khi chưa đăng nhập */}
+      {!isUserLoggedIn && <Footer />}
 
       {/* Modal Đăng nhập */}
       <SigninModal

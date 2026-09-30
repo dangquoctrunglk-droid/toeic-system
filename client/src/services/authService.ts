@@ -76,6 +76,20 @@ export const authService = {
   },
 
   /**
+   * Xác thực mã OTP trước khi cho phép đặt mật khẩu mới
+   */
+  async verifyOtp(
+    email: string,
+    otp: string,
+  ): Promise<{ valid: boolean; message: string }> {
+    const response = await api.post<{ valid: boolean; message: string }>(
+      "/auth/verify-otp",
+      { email, otp },
+    );
+    return response.data;
+  },
+
+  /**
    * Đăng nhập bằng Google
    */
   async loginWithGoogle(
@@ -143,6 +157,7 @@ export const {
   signup,
   forgotPassword,
   resetPassword,
+  verifyOtp,
   loginWithGoogle,
   logout,
   getToken,

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
@@ -13,18 +14,13 @@ import {
   ArrowRight,
   AlertCircle,
 } from "lucide-react";
-import { AuthModalShell } from "./components/AuthModalShell";
-import { AuthMarketingBanner } from "./components/AuthMarketingBanner";
+import { AuthModalShell } from "../../components/auth/AuthModalShell";
+import { AuthMarketingBanner } from "../../components/auth/AuthMarketingBanner";
 import { useAuth } from "../../context";
 import { getErrorMessage } from "../../utils/errorHandler";
+import { signupSchema, type SignupSchemaType } from "../../schemas";
 
-export interface SignupFormData {
-  name: string;
-  email: string;
-  password: string;
-  confirmPassword?: string;
-  agreeTerms?: boolean;
-}
+export type SignupFormData = SignupSchemaType;
 
 export interface SignupModalProps {
   isOpen?: boolean;
@@ -49,6 +45,7 @@ export function SignupModal({
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<SignupFormData>({
+    resolver: zodResolver(signupSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -189,13 +186,7 @@ export function SignupModal({
                   type="text"
                   autoComplete="off"
                   placeholder="Nguyễn Văn A"
-                  {...register("name", {
-                    required: "Vui lòng nhập họ và tên của bạn",
-                    minLength: {
-                      value: 2,
-                      message: "Họ và tên phải có ít nhất 2 ký tự",
-                    },
-                  })}
+                  {...register("name")}
                   className={`w-full pl-4 pr-10 py-2.5 text-sm bg-slate-900/80 border rounded-xl hover:border-slate-600 focus:bg-slate-900 focus:outline-none focus:ring-2 text-white placeholder-slate-500 transition-all ${
                     errors.name
                       ? "border-red-500/80 focus:border-red-500 focus:ring-red-500/20"
@@ -225,13 +216,7 @@ export function SignupModal({
                   type="email"
                   autoComplete="off"
                   placeholder="you@example.com"
-                  {...register("email", {
-                    required: "Vui lòng nhập địa chỉ email",
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: "Địa chỉ email không hợp lệ",
-                    },
-                  })}
+                  {...register("email")}
                   className={`w-full pl-4 pr-10 py-2.5 text-sm bg-slate-900/80 border rounded-xl hover:border-slate-600 focus:bg-slate-900 focus:outline-none focus:ring-2 text-white placeholder-slate-500 transition-all ${
                     errors.email
                       ? "border-red-500/80 focus:border-red-500 focus:ring-red-500/20"
@@ -260,14 +245,8 @@ export function SignupModal({
                 <input
                   type={showPassword ? "text" : "password"}
                   autoComplete="new-password"
-                  placeholder="Tạo mật khẩu an toàn (tối thiểu 6 ký tự)"
-                  {...register("password", {
-                    required: "Vui lòng nhập mật khẩu",
-                    minLength: {
-                      value: 6,
-                      message: "Mật khẩu tối thiểu 6 ký tự",
-                    },
-                  })}
+                  placeholder="Tạo mật khẩu an toàn (tối thiểu 8 ký tự, có chữ và số)"
+                  {...register("password")}
                   className={`w-full pl-4 pr-10 py-2.5 text-sm bg-slate-900/80 border rounded-xl hover:border-slate-600 focus:bg-slate-900 focus:outline-none focus:ring-2 text-white placeholder-slate-500 transition-all ${
                     errors.password
                       ? "border-red-500/80 focus:border-red-500 focus:ring-red-500/20"
@@ -302,12 +281,7 @@ export function SignupModal({
                   type={showConfirmPassword ? "text" : "password"}
                   autoComplete="new-password"
                   placeholder="Nhập lại mật khẩu"
-                  {...register("confirmPassword", {
-                    required: "Vui lòng xác nhận lại mật khẩu",
-                    validate: (value, formValues) =>
-                      value === formValues.password ||
-                      "Mật khẩu xác nhận không trùng khớp",
-                  })}
+                  {...register("confirmPassword")}
                   className={`w-full pl-4 pr-10 py-2.5 text-sm bg-slate-900/80 border rounded-xl hover:border-slate-600 focus:bg-slate-900 focus:outline-none focus:ring-2 text-white placeholder-slate-500 transition-all ${
                     errors.confirmPassword
                       ? "border-red-500/80 focus:border-red-500 focus:ring-red-500/20"
@@ -341,9 +315,7 @@ export function SignupModal({
               <input
                 id="signup-agree-terms"
                 type="checkbox"
-                {...register("agreeTerms", {
-                  required: "Bạn cần đồng ý với điều khoản dịch vụ để đăng ký",
-                })}
+                {...register("agreeTerms")}
                 className="w-4 h-4 mt-0.5 rounded border-slate-700 bg-slate-900 text-indigo-500 focus:ring-indigo-500/30 cursor-pointer accent-indigo-500"
               />
               <label

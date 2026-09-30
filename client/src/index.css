@@ -141,6 +141,16 @@
   animation: modal-zoom-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+@keyframes modal-shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+
+.animate-shake {
+  animation: modal-shake 0.4s ease-in-out;
+}
+
 .gradient-text {
   background: linear-gradient(135deg, #818cf8 0%, #c084fc 50%, #22d3ee 100%);
   -webkit-background-clip: text;
@@ -179,3 +189,153 @@
   mask-composite: exclude;
   pointer-events: none;
 }
+
+/* ── Light Mode System Themes ──────────────────────────── */
+html.light {
+  color-scheme: light;
+}
+
+html.light body {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+html.light ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+html.light ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
+html.light ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Light mode text colors */
+html.light h1:not([class*="gradient-text"]):not(.text-white):not([class*="!text-white"]),
+html.light h2:not([class*="gradient-text"]):not(.text-white):not([class*="!text-white"]),
+html.light h3:not([class*="gradient-text"]):not(.text-white):not([class*="!text-white"]),
+html.light h4:not([class*="gradient-text"]):not(.text-white):not([class*="!text-white"]) {
+  color: #0f172a;
+}
+
+html.light .text-slate-200:not([class*="!text-"]):not([class*="text-white"]):not([class*="text-indigo-"]) {
+  color: #334155;
+}
+
+html.light .text-slate-300:not([class*="!text-"]):not([class*="text-white"]):not([class*="text-indigo-"]) {
+  color: #475569;
+}
+
+html.light .text-slate-400:not([class*="!text-"]):not([class*="text-white"]):not([class*="text-indigo-"]) {
+  color: #64748b;
+}
+
+/* Đảm bảo các phần tử explicitly mang chữ trắng trên banner/nút luôn giữ màu trắng */
+html.light .text-white,
+html.light [class*="!text-white"] {
+  color: #ffffff !important;
+}
+
+/* Light mode card containers & surfaces */
+html.light [class*="bg-[#0e162e]"],
+html.light [class*="bg-[#0d1527]"],
+html.light [class*="bg-[#121c3b]"],
+html.light [class*="bg-[#131d38]"],
+html.light [class*="bg-[#101938]"],
+html.light [class*="bg-[#0a1124]"],
+html.light [class*="bg-[#0f1729]"] {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+}
+
+html.light [class*="bg-[#0e162e]"]:hover,
+html.light [class*="bg-[#121c3b]"]:hover {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 20px 30px -10px rgba(99, 102, 241, 0.15);
+}
+
+html.light .hero-grid-bg {
+  background-image:
+    linear-gradient(rgba(99, 102, 241, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99, 102, 241, 0.08) 1px, transparent 1px);
+}
+
+/* ── Custom React-Toastify for TOEIC Master Theme ─────── */
+:root {
+  --toastify-color-light: #ffffff;
+  --toastify-color-dark: #0b1329;
+  --toastify-color-info: #06b6d4;
+  --toastify-color-success: #10b981;
+  --toastify-color-warning: #f59e0b;
+  --toastify-color-error: #ef4444;
+  --toastify-toast-bd-radius: 16px;
+  --toastify-font-family: var(--font-sans);
+}
+
+.Toastify__toast {
+  border-radius: 16px !important;
+  font-family: var(--font-sans) !important;
+  padding: 14px 18px !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3) !important;
+  backdrop-filter: blur(14px) !important;
+}
+
+.Toastify__toast-theme--dark {
+  background-color: rgba(11, 19, 41, 0.95) !important;
+  border: 1px solid rgba(51, 65, 85, 0.7) !important;
+  color: #f1f5f9 !important;
+}
+
+.Toastify__toast-theme--dark.Toastify__toast--success {
+  border-color: rgba(16, 185, 129, 0.45) !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 0 15px rgba(16, 185, 129, 0.15) !important;
+}
+
+.Toastify__toast-theme--dark.Toastify__toast--error {
+  border-color: rgba(239, 68, 68, 0.45) !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 0 15px rgba(239, 68, 68, 0.15) !important;
+}
+
+.Toastify__toast-theme--dark.Toastify__toast--info {
+  border-color: rgba(6, 182, 212, 0.45) !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 0 15px rgba(6, 182, 212, 0.15) !important;
+}
+
+.Toastify__toast-theme--dark.Toastify__toast--warning {
+  border-color: rgba(245, 158, 11, 0.45) !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 0 15px rgba(245, 158, 11, 0.15) !important;
+}
+
+.Toastify__toast-theme--light {
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #0f172a !important;
+  box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.06) !important;
+}
+
+.Toastify__toast-body {
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+  line-height: 1.4 !important;
+}
+
+/* Custom Gradient Progress Bar matching TOEIC Master accents */
+.Toastify__progress-bar--success {
+  background: linear-gradient(90deg, #10b981, #06b6d4) !important;
+}
+
+.Toastify__progress-bar--error {
+  background: linear-gradient(90deg, #ef4444, #f43f5e) !important;
+}
+
+.Toastify__progress-bar--info {
+  background: linear-gradient(90deg, #6366f1, #06b6d4) !important;
+}
+
+.Toastify__progress-bar--warning {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24) !important;
+}
+
+

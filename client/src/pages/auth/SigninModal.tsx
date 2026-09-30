@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
@@ -12,16 +13,13 @@ import {
   ArrowRight,
   AlertCircle,
 } from "lucide-react";
-import { AuthModalShell } from "./components/AuthModalShell";
-import { AuthMarketingBanner } from "./components/AuthMarketingBanner";
+import { AuthModalShell } from "../../components/auth/AuthModalShell";
+import { AuthMarketingBanner } from "../../components/auth/AuthMarketingBanner";
 import { useAuth } from "../../context";
 import { getErrorMessage } from "../../utils/errorHandler";
+import { signinSchema, type SigninSchemaType } from "../../schemas";
 
-export interface SigninFormData {
-  email: string;
-  password: string;
-  rememberMe?: boolean;
-}
+export type SigninFormData = SigninSchemaType;
 
 export interface SigninModalProps {
   isOpen?: boolean;
@@ -47,6 +45,7 @@ export function SigninModal({
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<SigninFormData>({
+    resolver: zodResolver(signinSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -195,13 +194,7 @@ export function SigninModal({
                   type="email"
                   autoComplete="off"
                   placeholder="you@example.com"
-                  {...register("email", {
-                    required: "Vui lòng nhập địa chỉ email",
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: "Địa chỉ email không hợp lệ",
-                    },
-                  })}
+                  {...register("email")}
                   className={`w-full pl-4 pr-10 py-2.5 text-sm bg-slate-900/80 border rounded-xl hover:border-slate-600 focus:bg-slate-900 focus:outline-none focus:ring-2 text-white placeholder-slate-500 transition-all ${
                     errors.email
                       ? "border-red-500/80 focus:border-red-500 focus:ring-red-500/20"
@@ -240,13 +233,7 @@ export function SigninModal({
                   type={showPassword ? "text" : "password"}
                   autoComplete="current-password"
                   placeholder="Nhập mật khẩu của bạn"
-                  {...register("password", {
-                    required: "Vui lòng nhập mật khẩu",
-                    minLength: {
-                      value: 6,
-                      message: "Mật khẩu tối thiểu 6 ký tự",
-                    },
-                  })}
+                  {...register("password")}
                   className={`w-full pl-4 pr-10 py-2.5 text-sm bg-slate-900/80 border rounded-xl hover:border-slate-600 focus:bg-slate-900 focus:outline-none focus:ring-2 text-white placeholder-slate-500 transition-all ${
                     errors.password
                       ? "border-red-500/80 focus:border-red-500 focus:ring-red-500/20"

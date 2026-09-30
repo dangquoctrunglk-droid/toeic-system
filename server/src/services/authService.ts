@@ -91,6 +91,27 @@ export const requestForgotPassword = async (email: string) => {
   };
 };
 
+// Xác thực mã OTP trước khi cho phép đặt mật khẩu mới
+export const verifyOtp = async (email: string, otp: string) => {
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new Error("Không tìm thấy thông tin tài khoản!");
+  }
+
+  if (!user.resetPasswordOtp || user.resetPasswordOtp !== otp.trim()) {
+    throw new Error("Mã OTP không chính xác. Vui lòng kiểm tra lại!");
+  }
+
+  if (!user.resetPasswordExpires || user.resetPasswordExpires < new Date()) {
+    throw new Error("Mã OTP đã hết hạn. Vui lòng yêu cầu mã mới!");
+  }
+
+  return {
+    valid: true,
+    message: "Xác thực mã OTP thành công!",
+  };
+};
+
 // Đặt lại mật khẩu mới bằng OTP
 export const resetPassword = async (
   email: string,

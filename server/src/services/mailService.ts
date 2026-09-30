@@ -56,46 +56,49 @@ export const sendOtpEmail = async (
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mã xác thực OTP - TOEICMaster AI</title>
+    <title>Verification Code - TOEICMaster AI</title>
   </head>
-  <body style="margin: 0; padding: 0; background-color: #0b1120; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #e2e8f0;">
+  <body style="margin: 0; padding: 0; background-color: #080d1c; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #f1f5f9;">
     <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="padding: 40px 15px;">
       <tr>
         <td align="center">
-          <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 520px; background-color: #0f172a; border: 1px solid #1e293b; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);">
+          <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 500px; background: linear-gradient(180deg, #0a1126 0%, #0d1636 50%, #121c48 100%); border: 1px solid #6366f133; border-radius: 24px; overflow: hidden; box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.8);">
             <!-- Header -->
             <tr>
-              <td style="padding: 32px 32px 20px; text-align: center; border-bottom: 1px solid #1e293b;">
+              <td style="padding: 36px 32px 20px; text-align: center; border-bottom: 1px solid #6366f122;">
+                <div style="display: inline-block; width: 48px; height: 48px; border-radius: 50%; background: radial-gradient(circle, #6366f133 0%, #0c1433 100%); border: 1px solid #818cf855; line-height: 48px; text-align: center; font-size: 22px; margin-bottom: 12px;">
+                  🔒
+                </div>
                 <h1 style="margin: 0; font-size: 24px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">
-                  TOEIC<span style="color: #6366f1;">Master</span> <span style="font-size: 11px; background: #312e81; color: #a5b4fc; padding: 3px 7px; border-radius: 6px; border: 1px solid #4338ca; vertical-align: middle; margin-left: 4px;">AI</span>
+                  TOEIC<span style="color: #818cf8;">Master</span> <span style="font-size: 10px; background: #312e81; color: #a5b4fc; padding: 2px 7px; border-radius: 6px; border: 1px solid #4338ca; vertical-align: middle; margin-left: 4px;">AI</span>
                 </h1>
-                <p style="margin: 6px 0 0; font-size: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">ETS PREP PLATFORM</p>
+                <p style="margin: 6px 0 0; font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.9;">ETS PREP PLATFORM</p>
               </td>
             </tr>
             <!-- Content -->
             <tr>
               <td style="padding: 32px;">
-                <h2 style="margin: 0 0 12px; font-size: 20px; font-weight: 700; color: #ffffff;">Yêu cầu đặt lại mật khẩu</h2>
-                <p style="margin: 0 0 20px; font-size: 14px; line-height: 1.6; color: #cbd5e1;">
-                  Xin chào <strong>${fullName}</strong>,<br>
-                  Bạn vừa gửi yêu cầu lấy lại mật khẩu trên hệ thống luyện thi <strong>TOEICMaster AI</strong>. Dưới đây là mã xác thực OTP của bạn:
+                <h2 style="margin: 0 0 10px; font-size: 20px; font-weight: 700; color: #ffffff;">Reset Your Password</h2>
+                <p style="margin: 0 0 22px; font-size: 14px; line-height: 1.6; color: #cbd5e1;">
+                  Hello <strong>${fullName}</strong>,<br>
+                  We received a request to reset your password for your <strong>TOEICMaster AI</strong> account. Please use the verification code below:
                 </p>
                 
-                <!-- OTP Box -->
-                <div style="background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%); border: 1px solid #4f46e5; border-radius: 12px; padding: 20px; text-align: center; margin: 24px 0;">
-                  <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #818cf8; margin-bottom: 8px; font-weight: 600;">Mã xác thực một lần (OTP)</div>
-                  <div style="font-size: 36px; font-weight: 800; letter-spacing: 8px; color: #ffffff; font-family: monospace;">${otp}</div>
-                  <div style="font-size: 12px; color: #94a3b8; margin-top: 8px;">Hiệu lực trong <strong style="color: #f59e0b;">10 phút</strong></div>
+                <!-- OTP Box matching dark indigo theme -->
+                <div style="background: #060a17; border: 1.5px solid #6366f1; border-radius: 16px; padding: 22px 16px; text-align: center; margin: 24px 0; box-shadow: 0 0 25px rgba(99, 102, 241, 0.25);">
+                  <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #a5b4fc; margin-bottom: 8px; font-weight: 600;">One-Time Verification Code</div>
+                  <div style="font-size: 38px; font-weight: 800; letter-spacing: 10px; color: #ffffff; font-family: 'Courier New', Courier, monospace; text-shadow: 0 0 12px rgba(129, 140, 248, 0.5);">${otp}</div>
+                  <div style="font-size: 12px; color: #94a3b8; margin-top: 10px;">Expires in <strong style="color: #fbbf24;">10 minutes</strong></div>
                 </div>
 
-                <p style="margin: 20px 0 0; font-size: 13px; line-height: 1.6; color: #94a3b8;">
-                  🔒 <strong>Lưu ý bảo mật:</strong> Tuyệt đối không chia sẻ mã này cho bất kỳ ai. Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email hoặc đổi mật khẩu để bảo vệ tài khoản.
+                <p style="margin: 20px 0 0; font-size: 12.5px; line-height: 1.6; color: #94a3b8;">
+                  🔒 <strong>Security Note:</strong> Never share this code with anyone. If you didn't make this request, please safely disregard this email.
                 </p>
               </td>
             </tr>
             <!-- Footer -->
             <tr>
-              <td style="padding: 20px 32px; background-color: #0b1120; border-top: 1px solid #1e293b; text-align: center; font-size: 12px; color: #64748b;">
+              <td style="padding: 20px 32px; background-color: #060a17; border-top: 1px solid #6366f122; text-align: center; font-size: 12px; color: #64748b;">
                 © 2026 TOEICMaster AI System. All rights reserved.
               </td>
             </tr>
@@ -111,11 +114,13 @@ export const sendOtpEmail = async (
     await transporter.sendMail({
       from: `"${senderName}" <${senderEmail}>`,
       to: toEmail,
-      subject: `[TOEICMaster] Mã xác thực OTP đặt lại mật khẩu: ${otp}`,
-      text: `Mã xác thực OTP của bạn là: ${otp}. Mã có hiệu lực trong 10 phút. Tuyệt đối không chia sẻ mã này cho người khác.`,
+      subject: `[TOEICMaster] Your Password Reset Code: ${otp}`,
+      text: `Your password reset code is: ${otp}. It expires in 10 minutes. Do not share this code with anyone.`,
       html: htmlContent,
     });
-    console.log(`✅ [EMAIL SERVICE] Đã gửi email OTP thành công tới: ${toEmail}`);
+    console.log(
+      `✅ [EMAIL SERVICE] Đã gửi email OTP thành công tới: ${toEmail}`,
+    );
     return { success: true, sentByEmail: true };
   } catch (error) {
     console.error(`❌ [EMAIL SERVICE] Lỗi khi gửi email qua SMTP:`, error);

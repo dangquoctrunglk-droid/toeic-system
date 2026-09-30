@@ -6,6 +6,7 @@ import {
   resetPassword,
   signinUser,
   signupUser,
+  verifyOtp,
 } from "../services/authService.js";
 
 // Đăng ký tài khoản
@@ -69,6 +70,28 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
   } catch (error: any) {
     res.status(StatusCodes.BAD_REQUEST).json({
       message: error?.message || "Không thể xử lý yêu cầu quên mật khẩu",
+    });
+  }
+};
+
+// Kiểm tra xác thực mã OTP trước khi đổi mật khẩu
+export const verifyOtpController = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        message: "Vui lòng nhập đầy đủ Email và mã OTP",
+      });
+      return;
+    }
+    const result = await verifyOtp(email, otp);
+    res.status(StatusCodes.OK).json(result);
+  } catch (error: any) {
+    res.status(StatusCodes.BAD_REQUEST).json({
+      message: error?.message || "Mã OTP không hợp lệ",
     });
   }
 };
