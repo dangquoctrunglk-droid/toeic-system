@@ -1,12 +1,20 @@
 import type React from "react";
 import { useState } from "react";
-import { ListeningHero } from "./ListeningHero";
-import { ListeningFilterBar } from "./ListeningFilterBar";
-import { ListeningPartCard } from "./ListeningPartCard";
-import { PartDetailView } from "./PartDetailView";
-import { BookmarkedSentencesList, type BookmarkedSentenceEntry } from "./BookmarkedSentencesList";
+import { ListeningHero } from "./overviewListening/ListeningHero";
+import { ListeningFilterBar } from "./overviewListening/ListeningFilterBar";
+import { ListeningPartCard } from "./overviewListening/ListeningPartCard";
+import { PartDetailView } from "./overviewListening/PartDetailView";
+import {
+  BookmarkedSentencesList,
+  type BookmarkedSentenceEntry,
+} from "./overviewListening/BookmarkedSentencesList";
 import { PART_DETAILED_CONFIGS, getAllSentences } from "../mockData";
-import type { ListeningTabKey, ListeningPart, TestGroupData } from "../types";
+import type {
+  ListeningTabKey,
+  ListeningPart,
+  TestGroupData,
+  VocabItem,
+} from "../types";
 
 /**
  * ==============================================================================
@@ -26,30 +34,84 @@ import type { ListeningTabKey, ListeningPart, TestGroupData } from "../types";
  * ==============================================================================
  */
 
-interface ListeningOverviewProps {
+export interface ListeningOverviewProps {
   testGroups: TestGroupData[];
   onSelectPracticePart: (
     part: ListeningPart,
     testId: string,
     topicOrCardId?: string,
   ) => void;
+  onRetryWrongQuestions?: (
+    part: ListeningPart,
+    testId: string,
+    topicOrCardId?: string,
+  ) => void;
+  onResetCardProgress?: (cardId: string) => void;
   isDarkMode: boolean;
+  userKey?: string;
   bookmarkedIds?: string[];
   onToggleBookmark?: (sentenceId: string) => void;
   onPracticeSentence?: (item: BookmarkedSentenceEntry) => void;
+  activeTab?: ListeningTabKey;
+  onTabChange?: (tab: ListeningTabKey) => void;
+  selectedYear?: number;
+  onYearChange?: (year: number) => void;
+  showBookmarkedOnly?: boolean;
+  onShowBookmarkedOnlyChange?: (show: boolean) => void;
+  savedVocabs?: VocabItem[];
 }
 
 export const ListeningOverview: React.FC<ListeningOverviewProps> = ({
   testGroups,
   onSelectPracticePart,
+  onRetryWrongQuestions,
+  onResetCardProgress,
   isDarkMode,
+  userKey,
   bookmarkedIds = [],
   onToggleBookmark = () => {},
   onPracticeSentence = () => {},
+  activeTab: controlledActiveTab,
+  onTabChange: controlledOnTabChange,
+  selectedYear: controlledSelectedYear,
+  onYearChange: controlledOnYearChange,
+  showBookmarkedOnly: controlledShowBookmarkedOnly,
+  onShowBookmarkedOnlyChange: controlledOnShowBookmarkedOnlyChange,
+  savedVocabs,
 }) => {
-  const [activeTab, setActiveTab] = useState<ListeningTabKey>("dictation");
-  const [selectedYear, setSelectedYear] = useState<number>(2026);
-  const [showBookmarkedOnly, setShowBookmarkedOnly] = useState<boolean>(false);
+  const [internalTab, setInternalTab] = useState<ListeningTabKey>("dictation");
+  const [internalYear, setInternalYear] = useState<number>(2026);
+  const [internalShowBookmarkedOnly, setInternalShowBookmarkedOnly] =
+    useState<boolean>(false);
+
+  const activeTab = controlledActiveTab ?? internalTab;
+  const selectedYear = controlledSelectedYear ?? internalYear;
+  const showBookmarkedOnly =
+    controlledShowBookmarkedOnly ?? internalShowBookmarkedOnly;
+
+  const handleTabChange = (tab: ListeningTabKey) => {
+    if (controlledOnTabChange) {
+      controlledOnTabChange(tab);
+    } else {
+      setInternalTab(tab);
+    }
+  };
+
+  const handleYearChange = (year: number) => {
+    if (controlledOnYearChange) {
+      controlledOnYearChange(year);
+    } else {
+      setInternalYear(year);
+    }
+  };
+
+  const handleShowBookmarkedOnlyChange = (show: boolean) => {
+    if (controlledOnShowBookmarkedOnlyChange) {
+      controlledOnShowBookmarkedOnlyChange(show);
+    } else {
+      setInternalShowBookmarkedOnly(show);
+    }
+  };
 
   // Lọc danh sách câu hỏi đã lưu đánh dấu để hiển thị
   const allSentences = getAllSentences();
@@ -70,16 +132,18 @@ export const ListeningOverview: React.FC<ListeningOverviewProps> = ({
       <ListeningFilterBar
         activeTab={activeTab}
         onTabChange={(tab) => {
-          setActiveTab(tab);
-          setShowBookmarkedOnly(false);
+          handleTabChange(tab);
+          handleShowBookmarkedOnlyChange(false);
         }}
         selectedYear={selectedYear}
         onYearChange={(year) => {
-          setSelectedYear(year);
-          setShowBookmarkedOnly(false);
+          handleYearChange(year);
+          handleShowBookmarkedOnlyChange(false);
         }}
         showBookmarkedOnly={showBookmarkedOnly}
-        onToggleBookmarkedOnly={() => setShowBookmarkedOnly((prev) => !prev)}
+        onToggleBookmarkedOnly={() =>
+          handleShowBookmarkedOnlyChange(!showBookmarkedOnly)
+        }
         bookmarkedCount={bookmarkedIds.length}
         isDarkMode={isDarkMode}
       />
@@ -109,7 +173,7 @@ export const ListeningOverview: React.FC<ListeningOverviewProps> = ({
                 </h2>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
                 {activeTest.parts.map((partCard) => (
                   <ListeningPartCard
                     key={partCard.part}
@@ -133,7 +197,15 @@ export const ListeningOverview: React.FC<ListeningOverviewProps> = ({
           onStartLearning={(cardId) =>
             onSelectPracticePart(1, activeTest.id, cardId)
           }
+          onRetryWrong={(cardId) =>
+            onRetryWrongQuestions
+              ? onRetryWrongQuestions(1, activeTest.id, cardId)
+              : onSelectPracticePart(1, activeTest.id, cardId)
+          }
+          onResetProgress={onResetCardProgress}
           isDarkMode={isDarkMode}
+          userKey={userKey}
+          savedVocabs={savedVocabs}
         />
       )}
 
@@ -144,7 +216,15 @@ export const ListeningOverview: React.FC<ListeningOverviewProps> = ({
           onStartLearning={(cardId) =>
             onSelectPracticePart(2, activeTest.id, cardId)
           }
+          onRetryWrong={(cardId) =>
+            onRetryWrongQuestions
+              ? onRetryWrongQuestions(2, activeTest.id, cardId)
+              : onSelectPracticePart(2, activeTest.id, cardId)
+          }
+          onResetProgress={onResetCardProgress}
           isDarkMode={isDarkMode}
+          userKey={userKey}
+          savedVocabs={savedVocabs}
         />
       )}
 
@@ -155,7 +235,15 @@ export const ListeningOverview: React.FC<ListeningOverviewProps> = ({
           onStartLearning={(cardId) =>
             onSelectPracticePart(3, activeTest.id, cardId)
           }
+          onRetryWrong={(cardId) =>
+            onRetryWrongQuestions
+              ? onRetryWrongQuestions(3, activeTest.id, cardId)
+              : onSelectPracticePart(3, activeTest.id, cardId)
+          }
+          onResetProgress={onResetCardProgress}
           isDarkMode={isDarkMode}
+          userKey={userKey}
+          savedVocabs={savedVocabs}
         />
       )}
 
@@ -166,7 +254,15 @@ export const ListeningOverview: React.FC<ListeningOverviewProps> = ({
           onStartLearning={(cardId) =>
             onSelectPracticePart(4, activeTest.id, cardId)
           }
+          onRetryWrong={(cardId) =>
+            onRetryWrongQuestions
+              ? onRetryWrongQuestions(4, activeTest.id, cardId)
+              : onSelectPracticePart(4, activeTest.id, cardId)
+          }
+          onResetProgress={onResetCardProgress}
           isDarkMode={isDarkMode}
+          userKey={userKey}
+          savedVocabs={savedVocabs}
         />
       )}
     </div>

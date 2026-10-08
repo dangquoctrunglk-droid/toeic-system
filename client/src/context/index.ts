@@ -7,3 +7,10 @@ export {
   default as ThemeContext,
 } from "./ThemeContext";
 export type { Theme, ThemeContextType } from "./ThemeContext";
+
+export {
+  UIProvider,
+  useUI,
+  default as UIContext,
+} from "./UIContext";
+export type { UIContextType } from "./UIContext";

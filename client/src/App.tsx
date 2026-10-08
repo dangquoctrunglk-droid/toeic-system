@@ -7,7 +7,7 @@ import ProfilePage from "./pages/profile/ProfilePage";
 import UserPage from "./pages/user/UserPage";
 import ListeningPage from "./pages/listening/ListeningPage";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider, ThemeProvider, useTheme } from "./context";
+import { AuthProvider, ThemeProvider, UIProvider, useTheme } from "./context";
 import { env } from "./config/environment";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -36,21 +36,23 @@ function App() {
       <BrowserRouter>
         <AuthProvider>
           <ThemeProvider>
-            <AppToastContainer />
-            <Routes>
-              <Route element={<MainLayout />}>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/dashboard" element={<DashboardPage />} />
-                <Route path="/history" element={<HistoryPage />} />
-                <Route path="/profile" element={<ProfilePage />} />
-                <Route path="/user" element={<UserPage />} />
-                <Route path="/listening" element={<ListeningPage />} />
-                <Route path="/auth/signin" element={<HomePage />} />
-                <Route path="/auth/signup" element={<HomePage />} />
-                <Route path="/auth/forgot-password" element={<HomePage />} />
-                <Route path="/auth/reset-password" element={<HomePage />} />
-              </Route>
-            </Routes>
+            <UIProvider>
+              <AppToastContainer />
+              <Routes>
+                <Route element={<MainLayout />}>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/dashboard" element={<DashboardPage />} />
+                  <Route path="/history" element={<HistoryPage />} />
+                  <Route path="/profile" element={<ProfilePage />} />
+                  <Route path="/user" element={<UserPage />} />
+                  <Route path="/listening" element={<ListeningPage />} />
+                  <Route path="/auth/signin" element={<HomePage />} />
+                  <Route path="/auth/signup" element={<HomePage />} />
+                  <Route path="/auth/forgot-password" element={<HomePage />} />
+                  <Route path="/auth/reset-password" element={<HomePage />} />
+                </Route>
+              </Routes>
+            </UIProvider>
           </ThemeProvider>
         </AuthProvider>
       </BrowserRouter>

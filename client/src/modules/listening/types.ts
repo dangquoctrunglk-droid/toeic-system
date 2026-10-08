@@ -32,6 +32,7 @@ export interface QuestionOption {
   text: string;
   isCorrect: boolean;
   translation?: string;
+  blanks?: BlankField[];
 }
 
 export interface SubQuestionItem {
@@ -43,6 +44,10 @@ export interface SubQuestionItem {
   translation?: string;
   vocabRecommendation?: VocabItem;
   evidence?: string;
+  scriptQuoteEn?: string;
+  scriptQuoteVi?: string;
+  paraphrase?: string;
+  explanation?: string;
 }
 
 export interface SentenceItem {
@@ -71,6 +76,9 @@ export interface SentenceItem {
   subQuestions?: SubQuestionItem[];
   transcript?: string;
   evidence?: string;
+  // Phân cấp cấu trúc Bài / Câu (Part 1 Nghe chép: 6 Bài x 4 Câu)
+  baiNumber?: number;
+  subSentenceNumber?: number;
 }
 
 export interface PartPracticeProgress {
@@ -104,11 +112,21 @@ export interface TestGroupData {
   parts: PartCardData[];
 }
 
+export interface CardPracticeStats {
+  completedCount: number;
+  correctCount: number;
+  wrongCount: number;
+  totalQuestions: number;
+  wrongQuestionIds?: string[];
+}
+
 export interface PracticeLevelCard {
   id: string;
+  level?: number;
   title: string;
   questionCount: number;
   statusText: string;
+  stats?: CardPracticeStats;
 }
 
 export interface PracticeTopicCategory {
@@ -119,6 +137,7 @@ export interface PracticeTopicCategory {
 
 export interface PartDetailedConfig {
   part: ListeningPart;
+  partTitle?: string;
   levels: PracticeLevelCard[];
   topics: PracticeTopicCategory;
 }

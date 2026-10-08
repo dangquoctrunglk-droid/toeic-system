@@ -3,11 +3,12 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Navbar } from "./Navbar";
 import { Footer } from "./Footer";
 import { ForgotPasswordModal, SigninModal, SignupModal } from "../pages/auth";
-import { useAuth, useTheme } from "../context";
+import { useAuth, useTheme, useUI } from "../context";
 
 export const MainLayout: React.FC = () => {
   const { isDarkMode } = useTheme();
   const { isAuthenticated, user } = useAuth();
+  const { isNavbarVisible, isFooterVisible, isPracticeMode } = useUI();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -24,20 +25,22 @@ export const MainLayout: React.FC = () => {
 
   return (
     <div
-      className={`min-h-screen flex flex-col transition-colors duration-200 selection:bg-indigo-500 selection:text-white ${
+      className={`${
+        isPracticeMode ? "h-screen overflow-hidden" : "min-h-screen"
+      } flex flex-col transition-colors duration-200 selection:bg-indigo-500 selection:text-white ${
         isDarkMode ? "bg-[#080d1c] text-slate-100" : "bg-[#f8fafc] text-slate-900"
       }`}
     >
-      {/* Navbar cố định ở đầu trang */}
-      <Navbar />
+      {/* Navbar cố định ở đầu trang - Ẩn khi vào chế độ luyện tập / học ngay */}
+      {isNavbarVisible && <Navbar />}
 
       {/* Vùng nội dung tràn màn hình chuẩn theme */}
-      <main className="flex-1 w-full">
+      <main className={`flex-1 w-full ${isPracticeMode ? "h-full overflow-hidden" : ""}`}>
         <Outlet />
       </main>
 
-      {/* Footer ở cuối trang: chỉ hiển thị cho khách vãng lai khi chưa đăng nhập */}
-      {!isUserLoggedIn && <Footer />}
+      {/* Footer ở cuối trang: chỉ hiển thị cho khách vãng lai khi chưa đăng nhập và không ở chế độ luyện tập */}
+      {!isUserLoggedIn && isFooterVisible && <Footer />}
 
       {/* Modal Đăng nhập */}
       <SigninModal
